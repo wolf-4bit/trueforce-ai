@@ -1,0 +1,14 @@
+echo "🔍 Running formatters and linters..."
+
+echo "⚙️  Running goimports..."
+find . -name "*.go" | grep -v /vendor/ | xargs goimports -w
+
+echo "🚨 Running golangci-lint..."
+golangci-lint run ./...
+
+if [ $? -ne 0 ]; then
+  echo "❌ Lint errors found. Commit aborted."
+  exit 1
+fi
+
+echo "✅ All checks passed."

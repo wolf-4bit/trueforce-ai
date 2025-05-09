@@ -1,0 +1,11 @@
+run:
+  timeout: 60s
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - gosimple
+    - gofmt
+    - goimports

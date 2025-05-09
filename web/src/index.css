@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* DaisyUI configuration */
+@plugin "daisyui" {
+  themes: winter --default, dark; /* Set winter as default, keep dark available */
+}
+
+/* Set Inter as the main font */
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif;
+  }
+}
+

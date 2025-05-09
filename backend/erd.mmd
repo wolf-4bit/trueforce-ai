@@ -1,0 +1,233 @@
+erDiagram
+    atlas_schema_revisions_atlas_schema_revisions["atlas_schema_revisions.atlas_schema_revisions"] {
+      character_varying version PK
+      character_varying description
+      bigint type
+      bigint applied
+      bigint total
+      timestamptz executed_at
+      bigint execution_time
+      text error
+      text error_stmt
+      character_varying hash
+      jsonb partial_hashes
+      character_varying operator_version
+    }
+    public_audit_logs["public.audit_logs"] {
+      bigserial id PK
+      bigint user_id FK
+      character_varying(50) action
+      character_varying(50) entity_type
+      bigint entity_id
+      jsonb details
+      character_varying(45) ip_address
+      text user_agent
+      timestamptz created_at
+    }
+    public_audit_logs }o--o| public_users : fk_users_audit_logs
+    public_case_officers["public.case_officers"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint case_id FK
+      bigint officer_id FK
+      character_varying(50) role
+      text notes
+      bigint created_by_id FK
+    }
+    public_case_officers }o--o| public_users : fk_case_officers_created_by
+    public_case_officers }o--o| public_cases : fk_cases_officers
+    public_case_officers }o--o| public_users : fk_users_case_assignments
+    public_case_tags["public.case_tags"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint case_id FK
+      bigint tag_id FK
+      bigint created_by_id FK
+    }
+    public_case_tags }o--o| public_users : fk_case_tags_created_by
+    public_case_tags }o--o| public_cases : fk_cases_tags
+    public_case_tags }o--o| public_tags : fk_tags_case_tags
+    public_cases["public.cases"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      character_varying(50) case_number
+      character_varying(200) title
+      text description
+      text location
+      timestamptz incident_date
+      character_varying(50) status
+      character_varying(20) priority
+      bigint created_by_id FK
+      timestamptz closed_at
+      bigint closed_by_id FK
+    }
+    public_cases }o--o| public_users : fk_users_closed_cases
+    public_cases }o--o| public_users : fk_users_created_cases
+    public_departments["public.departments"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      character_varying(100) name
+      text description
+    }
+    public_evidences["public.evidences"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint case_id FK
+      character_varying(200) title
+      text description
+      text file_path
+      character_varying(50) file_type
+      bigint file_size
+      character_varying(128) file_hash
+      jsonb metadata
+      boolean is_confidential
+      bigint created_by_id FK
+    }
+    public_evidences }o--o| public_cases : fk_cases_evidences
+    public_evidences }o--o| public_users : fk_evidences_created_by
+    public_permission_categories["public.permission_categories"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      character_varying(100) name
+      text description
+    }
+    public_permissions["public.permissions"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint category_id FK
+      character_varying(100) name
+      character_varying(50) code
+      text description
+    }
+    public_permissions }o--o| public_permission_categories : fk_permission_categories_permissions
+    public_refresh_tokens["public.refresh_tokens"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint user_id FK
+      character_varying(255) token
+      timestamptz expiry_date
+      boolean is_revoked
+      timestamptz revoked_at
+    }
+    public_refresh_tokens }o--o| public_users : fk_users_refresh_tokens
+    public_role_change_histories["public.role_change_histories"] {
+      bigserial id PK
+      bigint role_id FK
+      bigint changed_by_id FK
+      character_varying(50) action
+      jsonb previous_data
+      jsonb new_data
+      timestamptz created_at
+    }
+    public_role_change_histories }o--o| public_roles : fk_roles_change_history
+    public_role_change_histories }o--o| public_users : fk_users_role_changes_made
+    public_role_management_permissions["public.role_management_permissions"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint manager_role_id FK
+      bigint manageable_role_id FK
+      bigint created_by_id FK
+    }
+    public_role_management_permissions }o--o| public_users : fk_role_management_permissions_created_by
+    public_role_management_permissions }o--o| public_roles : fk_roles_managed_by_roles
+    public_role_management_permissions }o--o| public_roles : fk_roles_managed_roles
+    public_role_permissions["public.role_permissions"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint role_id FK
+      bigint permission_id FK
+      bigint granted_by_id FK
+      timestamptz granted_at
+    }
+    public_role_permissions }o--o| public_permissions : fk_permissions_role_permissions
+    public_role_permissions }o--o| public_roles : fk_roles_role_permissions
+    public_role_permissions }o--o| public_users : fk_users_granted_permissions
+    public_roles["public.roles"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      character_varying(50) name
+      text description
+      bigint parent_role_id FK
+      bigint level
+      boolean is_system_role
+      bigint created_by_id FK
+      bigint updated_by_id FK
+    }
+    public_roles }o--o| public_roles : fk_roles_child_roles
+    public_roles }o--o| public_users : fk_users_created_roles
+    public_roles }o--o| public_users : fk_users_updated_roles
+    public_tags["public.tags"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      character_varying(50) name
+      character_varying(7) color
+    }
+    public_user_roles["public.user_roles"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint user_id FK
+      bigint role_id FK
+      bigint assigned_by_id FK
+    }
+    public_user_roles }o--o| public_roles : fk_roles_user_roles
+    public_user_roles }o--o| public_users : fk_users_role_assignments
+    public_user_roles }o--o| public_users : fk_users_user_roles
+    public_user_sessions["public.user_sessions"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      bigint user_id FK
+      bigint refresh_token_id FK
+      text device_info
+      character_varying(45) ip_address
+      text user_agent
+      timestamptz last_activity
+      boolean is_active
+    }
+    public_user_sessions }o--o| public_refresh_tokens : fk_refresh_tokens_sessions
+    public_user_sessions }o--o| public_users : fk_users_user_sessions
+    public_users["public.users"] {
+      bigserial id PK
+      timestamptz created_at
+      timestamptz updated_at
+      timestamptz deleted_at
+      character_varying(50) first_name
+      character_varying(50) last_name
+      character_varying(100) email
+      character_varying(255) password_hash
+      character_varying(100) google_id
+      character_varying(20) phone_number
+      character_varying(20) badge_number
+      bigint department_id FK
+      text profile_image_url
+      boolean is_active
+      timestamptz last_login
+    }
+    public_users }o--o| public_departments : fk_departments_users
